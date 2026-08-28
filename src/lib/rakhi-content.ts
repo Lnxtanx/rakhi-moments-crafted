@@ -26,7 +26,7 @@ export const copy = {
     brotherPlaceholder: "Vivek",
     sisterLabel: "Sister's name",
     sisterLabelHi: "बहन का नाम",
-    sisterPlaceholder: "Priya",
+    sisterPlaceholder: "Chandrika Kumari",
     photoLabel: "A photo of you two (optional)",
     photoLabelHi: "यादों के नाम",
     photoHelp: "JPG or PNG · stays on this device",
@@ -72,9 +72,10 @@ export const copy = {
     emailTitle: "Send via email",
     emailTo: "Brother's email",
     emailFrom: "Your email",
-    emailSend: "Prepare email",
-    emailPending:
-      "Email delivery isn't connected yet — your details are saved and ready for when it is.",
+    emailSend: "Send via Email",
+    emailOpens:
+      "Your email app is opening with the Rakhi message ready to send — just press send.",
+    mailtoLinkLabel: "A little keepsake for us",
     shareTitle: "Share Rakhi",
     shareBtn: "Share link",
     copied: "Link copied",

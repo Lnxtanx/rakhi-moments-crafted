@@ -307,7 +307,7 @@ Sister's name
 
 Example:
 
-"Priya"
+"Chandrika Kumari"
 
 Brother's name
 
@@ -891,7 +891,7 @@ Examples:
 
 Use personalization naturally:
 
-Happy Raksha Bandhan, Priya.
+Happy Raksha Bandhan, Chandrika Kumari.
 
 With love, Vivek.
 

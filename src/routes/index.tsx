@@ -626,13 +626,37 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
   const [saving, setSaving] = useState(false);
   const [emailTo, setEmailTo] = useState("");
   const [emailFrom, setEmailFrom] = useState("");
-  const [emailQueued, setEmailQueued] = useState(false);
+  const [emailOpened, setEmailOpened] = useState(false);
 
   const sister = gift.sister.trim() || "आपकी बहन";
   const brother = gift.brother.trim() || "Bhai";
   const message = gift.message.trim() || copy.card.fallbackMessage;
 
   const shareText = `${copy.card.greeting}, ${brother} — with love, ${sister}.`;
+
+  /** Builds a mailto: link that opens the visitor's own mail client, pre-filled
+   *  with the finished Rakhi message. There is no email backend involved. */
+  const buildMailto = useCallback(
+    (to: string, from: string) => {
+      const recipient = to.trim();
+      const sender = from.trim();
+      if (!recipient || !sender) return "";
+      const url = typeof window !== "undefined" ? window.location.href : "";
+      const lines: string[] = [
+        `${copy.card.greeting}, ${brother}!`,
+        "",
+        message,
+        "",
+        `${copy.card.signature} ${sister}`,
+      ];
+      if (sender) lines.push(`· ${sender}`);
+      if (url) lines.push("", `${copy.share.mailtoLinkLabel}: ${url}`);
+      const subject = `${copy.card.greeting}, ${brother} ❤️`;
+      const body = lines.join("\n");
+      return `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    },
+    [brother, message, sister],
+  );
 
   const renderCard = useCallback(async () => {
     const node = cardRef.current;
@@ -642,7 +666,7 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
       pixelRatio: Math.min(3, Math.max(2, window.devicePixelRatio || 2)),
       cacheBust: true,
       backgroundColor: getComputedStyle(document.body).backgroundColor,
-      filter: (el) => !(el instanceof HTMLElement && el.dataset.exportHide === "true"),
+      filter: (el) => !(el instanceof HTMLElement && el.dataset["exportHide"] === "true"),
     });
   }, []);
 
@@ -749,10 +773,6 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
           <p className="deva mt-1 text-[0.9rem] text-[color:color-mix(in_oklab,var(--ink)_58%,var(--parchment))]">
             {copy.card.signatureHi}
           </p>
-
-          <p className="deva mt-8 text-[0.72rem] tracking-[0.12em] text-[color:color-mix(in_oklab,var(--ink)_45%,var(--parchment))]">
-            {copy.credit}
-          </p>
         </div>
       </article>
 
@@ -775,7 +795,9 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
             className="keepsake flex min-w-0 flex-col gap-4 p-[clamp(1.1rem,5vw,1.75rem)]"
             onSubmit={(e) => {
               e.preventDefault();
-              setEmailQueued(true);
+              const href = buildMailto(emailTo, emailFrom);
+              if (href) window.location.href = href;
+              setEmailOpened(Boolean(href));
             }}
           >
             <h3 className="display text-[1.05rem]">{copy.share.emailTitle}</h3>
@@ -789,7 +811,7 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
                 value={emailTo}
                 onChange={(e) => {
                   setEmailTo(e.target.value);
-                  setEmailQueued(false);
+                  setEmailOpened(false);
                 }}
               />
             </label>
@@ -803,16 +825,16 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
                 value={emailFrom}
                 onChange={(e) => {
                   setEmailFrom(e.target.value);
-                  setEmailQueued(false);
+                  setEmailOpened(false);
                 }}
               />
             </label>
             <button type="submit" className="btn-base btn-ghost self-start">
               {copy.share.emailSend}
             </button>
-            {emailQueued && (
+            {emailOpened && (
               <p role="status" className="text-[0.85rem] leading-relaxed text-[color:var(--burnt)]">
-                {copy.share.emailPending}
+                {copy.share.emailOpens}
               </p>
             )}
           </form>
