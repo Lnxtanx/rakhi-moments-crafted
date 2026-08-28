@@ -2,22 +2,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { copy, getTheme, themes, type ThemeId } from "@/lib/rakhi-content";
-import { CornerVine, Divider, PhotoFrame, Rakhi } from "@/components/ornaments";
+import { CornerVine, Divider, Diya, Lotus, PhotoFrame, Rakhi, Rangoli } from "@/components/ornaments";
 
 export const Route = createFileRoute("/")({
   component: Experience,
   head: () => ({
     meta: [
-      { title: "Ek Dhaaga — A Handcrafted Raksha Bandhan Keepsake" },
+      { title: "Ek Dhaaga — A Handcrafted Raksha Bandhan Rakhi for Your Brother" },
       {
         name: "description",
         content:
-          "Tie a digital rakhi: personalise a handcrafted Indian keepsake card with her name, a photo and a message, then share it on Raksha Bandhan.",
+          "Prepare a digital rakhi for your brother: pick one of six handcrafted designs, add a photo and a message, then send, share or save the keepsake card.",
       },
-      { property: "og:title", content: "Ek Dhaaga — A Handcrafted Raksha Bandhan Keepsake" },
+      { property: "og:title", content: "Ek Dhaaga — A Handcrafted Raksha Bandhan Rakhi" },
       {
         property: "og:description",
-        content: "A little Raksha Bandhan gift that happens to live on the web.",
+        content: "एक धागा, हज़ार यादें — a Raksha Bandhan keepsake a sister can send her brother.",
       },
       { property: "og:url", content: "/" },
     ],
@@ -28,7 +28,9 @@ export const Route = createFileRoute("/")({
 type Stage = "opening" | "personalize" | "designs" | "assembling" | "card";
 
 type Gift = {
+  /** sender */
   sister: string;
+  /** recipient */
   brother: string;
   message: string;
   photo: string | null;
@@ -55,6 +57,34 @@ function usePrefersReducedMotion() {
     return () => mq.removeEventListener("change", set);
   }, []);
   return reduced;
+}
+
+/** Adds `is-visible` to `.scroll-reveal` children as they enter the viewport. */
+function useScrollReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const items = Array.from(root.querySelectorAll<HTMLElement>(".scroll-reveal"));
+    if (!("IntersectionObserver" in window)) {
+      items.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-visible");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.15 },
+    );
+    items.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return ref;
 }
 
 /** A handful of slow marigold-dust particles — deliberately few. */
@@ -97,12 +127,20 @@ function Petals({ enabled }: { enabled: boolean }) {
 
 function Corners() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 opacity-70">
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 opacity-60">
       <CornerVine className="absolute left-0 top-0" />
       <CornerVine className="absolute right-0 top-0 -scale-x-100" />
       <CornerVine className="absolute bottom-0 left-0 -scale-y-100" />
       <CornerVine className="absolute bottom-0 right-0 -scale-100" />
     </div>
+  );
+}
+
+function Credit() {
+  return (
+    <p className="deva mt-10 text-center text-[0.78rem] tracking-[0.14em] text-[color:color-mix(in_oklab,var(--ink)_52%,var(--parchment))]">
+      {copy.credit}
+    </p>
   );
 }
 
@@ -125,18 +163,18 @@ function Experience() {
   return (
     <main
       style={themeStyle}
-      className="paper relative flex min-h-dvh flex-col items-center px-[clamp(1rem,5vw,3rem)] py-[max(1.5rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]"
+      className="paper relative flex min-h-dvh w-full max-w-full flex-col items-center overflow-x-hidden px-[clamp(0.9rem,5vw,3rem)] py-[max(1.5rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]"
     >
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-0 lamp-glow"
+        className="lamp-glow pointer-events-none fixed inset-0 z-0"
         style={{ background: theme.vars["--t-wash"] }}
       />
       <Petals enabled={!reduced && stage !== "assembling"} />
       <Corners />
       <div ref={liveRef} aria-live="polite" className="sr-only" />
 
-      <div className="relative z-10 flex w-full flex-1 items-center justify-center">
+      <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center">
         {stage === "opening" && <Opening onOpen={() => setStage("personalize")} />}
         {stage === "personalize" && (
           <Personalize
@@ -158,7 +196,13 @@ function Experience() {
           <Assembling theme={gift.theme} onDone={() => setStage("card")} reduced={reduced} />
         )}
         {stage === "card" && (
-          <FinalCard gift={gift} onRestart={() => { setGift(emptyGift); setStage("opening"); }} />
+          <FinalCard
+            gift={gift}
+            onRestart={() => {
+              setGift(emptyGift);
+              setStage("opening");
+            }}
+          />
         )}
       </div>
     </main>
@@ -169,42 +213,148 @@ function Experience() {
 
 function Opening({ onOpen }: { onOpen: () => void }) {
   const [second, setSecond] = useState(false);
+  const revealRef = useScrollReveal<HTMLDivElement>();
+
   useEffect(() => {
     const t = setTimeout(() => setSecond(true), 2200);
     return () => clearTimeout(t);
   }, []);
 
   return (
-    <section className="mx-auto flex max-w-[38rem] flex-col items-center text-center">
-      <p className="deva reveal text-[clamp(1rem,3.4vw,1.35rem)] text-[color:var(--t-accent)]">
-        {copy.opening.kicker}
-      </p>
+    <div ref={revealRef} className="w-full">
+      <section className="mx-auto flex max-w-[38rem] flex-col items-center text-center">
+        <p className="deva reveal text-[clamp(1.05rem,3.6vw,1.5rem)] tracking-[0.16em] text-[color:var(--t-accent)]">
+          {copy.opening.kicker}
+        </p>
 
-      <Rakhi theme="royal" className="reveal mt-[clamp(1.5rem,5vw,2.5rem)] w-[clamp(11rem,42vw,17rem)]" />
+        <div className="relative mt-[clamp(1.25rem,5vw,2.25rem)] flex w-full items-center justify-center">
+          <Rangoli
+            className="pointer-events-none absolute w-[clamp(15rem,60vw,24rem)] opacity-25"
+            aria-hidden
+          />
+          <Rakhi theme="royal" className="reveal relative w-[clamp(10.5rem,42vw,17rem)]" />
+        </div>
 
-      <h1 className="display reveal mt-[clamp(1.5rem,5vw,2.5rem)] text-balance text-[clamp(1.5rem,5.4vw,2.4rem)] leading-[1.25]">
-        {copy.opening.line1}
-      </h1>
+        <h1 className="deva reveal mt-[clamp(1.5rem,5vw,2.25rem)] text-balance text-[clamp(1.9rem,8vw,3rem)] leading-[1.35] text-[color:var(--t-accent)]">
+          {copy.opening.hindiLine1}
+          <br />
+          {copy.opening.hindiLine2}
+        </h1>
 
-      <p
-        className={`mt-5 max-w-[30rem] text-balance text-[clamp(1rem,3.2vw,1.15rem)] leading-relaxed text-[color:color-mix(in_oklab,var(--ink)_74%,var(--parchment))] transition-opacity duration-[1200ms] ${
-          second ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        {copy.opening.line2}
-      </p>
+        <p className="display reveal mt-6 max-w-[32rem] text-balance text-[clamp(1.05rem,4vw,1.35rem)] leading-[1.5]">
+          {copy.opening.line1}
+        </p>
 
-      <Divider className="my-[clamp(1.75rem,6vw,2.75rem)]" />
+        <p
+          className={`mt-4 max-w-[30rem] text-balance text-[clamp(0.95rem,3.2vw,1.1rem)] leading-relaxed text-[color:color-mix(in_oklab,var(--ink)_74%,var(--parchment))] transition-opacity duration-[1200ms] ${
+            second ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {copy.opening.line2}
+        </p>
 
-      <button type="button" onClick={onOpen} className="btn-base btn-primary reveal">
-        {copy.opening.cta}
-      </button>
-      <p className="caption mt-5">{copy.opening.hint}</p>
+        <Divider className="my-[clamp(1.5rem,6vw,2.5rem)]" />
+
+        <p className="caption">{copy.opening.waiting}</p>
+
+        <button type="button" onClick={onOpen} className="btn-base btn-primary reveal mt-6">
+          {copy.opening.cta}
+        </button>
+        <p className="caption mt-5 max-w-[22rem]">{copy.opening.hint}</p>
+      </section>
+
+      <StoryOfAThread />
+      <InfoPanels />
+      <Credit />
+    </div>
+  );
+}
+
+/* ------------------------ story + information ---------------------- */
+
+function StoryOfAThread() {
+  return (
+    <section className="mx-auto mt-[clamp(4rem,14vw,8rem)] w-full max-w-[62rem]">
+      <header className="scroll-reveal flex flex-col items-center text-center">
+        <Lotus />
+        <p className="deva mt-3 text-[clamp(1.1rem,4vw,1.4rem)] text-[color:var(--t-accent)]">
+          {copy.story.kicker}
+        </p>
+        <h2 className="display mt-2 text-[clamp(1.35rem,4.6vw,2rem)]">{copy.story.title}</h2>
+        <Divider className="mx-auto my-7" />
+      </header>
+
+      <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {copy.story.steps.map((s, i) => (
+          <li
+            key={s.en}
+            className="scroll-reveal keepsake relative flex min-w-0 flex-col gap-2 p-[clamp(1.1rem,4vw,1.6rem)]"
+            style={{ transitionDelay: `${i * 90}ms` }}
+          >
+            <span className="caption">{String(i + 1).padStart(2, "0")}</span>
+            <span className="deva text-[clamp(1.25rem,5vw,1.6rem)] leading-tight text-[color:var(--t-accent)]">
+              {s.hi}
+            </span>
+            <span className="display text-[1.05rem]">{s.en}</span>
+            <p className="text-[0.9rem] leading-relaxed text-[color:color-mix(in_oklab,var(--ink)_70%,var(--parchment))]">
+              {s.body}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function InfoPanels() {
+  return (
+    <section className="mx-auto mt-[clamp(4rem,14vw,8rem)] w-full max-w-[62rem]">
+      <header className="scroll-reveal flex flex-col items-center text-center">
+        <Diya />
+        <p className="deva mt-3 text-[clamp(1.1rem,4vw,1.4rem)] text-[color:var(--t-accent)]">
+          {copy.info.kicker}
+        </p>
+        <h2 className="display mt-2 text-[clamp(1.35rem,4.6vw,2rem)]">{copy.info.title}</h2>
+        <Divider className="mx-auto my-7" />
+      </header>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {copy.info.panels.map((p, i) => (
+          <article
+            key={p.en}
+            className="scroll-reveal keepsake relative min-w-0 overflow-hidden p-[clamp(1.25rem,5vw,2rem)]"
+            style={{ transitionDelay: `${i * 90}ms` }}
+          >
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-2 border border-dashed border-[color:color-mix(in_oklab,var(--antique-gold)_32%,transparent)]"
+            />
+            <div className="relative">
+              <h3 className="deva text-[clamp(1.15rem,4.4vw,1.5rem)] leading-snug text-[color:var(--t-accent)]">
+                {p.hi}
+              </h3>
+              <p className="caption mt-2">{p.en}</p>
+              <p className="mt-4 text-[0.94rem] leading-[1.8] text-[color:color-mix(in_oklab,var(--ink)_78%,var(--parchment))]">
+                {p.body}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
 
 /* ------------------------- 2. personalize -------------------------- */
+
+function FieldLabel({ en, hi }: { en: string; hi: string }) {
+  return (
+    <span className="flex flex-wrap items-baseline gap-2">
+      <span className="caption">{en}</span>
+      <span className="deva text-[0.9rem] text-[color:var(--t-accent)]">{hi}</span>
+    </span>
+  );
+}
 
 function Personalize({
   gift,
@@ -228,8 +378,11 @@ function Personalize({
   return (
     <section className="w-full max-w-[34rem] py-8">
       <header className="text-center">
-        <h2 className="display text-[clamp(1.6rem,5vw,2.1rem)]">{copy.personalize.title}</h2>
-        <p className="mt-3 text-[0.95rem] text-[color:color-mix(in_oklab,var(--ink)_70%,var(--parchment))]">
+        <p className="deva text-[clamp(1.1rem,4vw,1.4rem)] text-[color:var(--t-accent)]">
+          {copy.personalize.titleHi}
+        </p>
+        <h2 className="display mt-2 text-[clamp(1.5rem,5vw,2.1rem)]">{copy.personalize.title}</h2>
+        <p className="mt-3 text-[0.95rem] leading-relaxed text-[color:color-mix(in_oklab,var(--ink)_70%,var(--parchment))]">
           {copy.personalize.subtitle}
         </p>
         <Divider className="mx-auto my-7" />
@@ -242,33 +395,35 @@ function Personalize({
           onNext();
         }}
       >
-        <div className="grid gap-7 sm:grid-cols-2">
-          <label className="flex flex-col gap-2">
-            <span className="caption">{copy.personalize.sisterLabel}</span>
+        <div className="grid min-w-0 gap-7 sm:grid-cols-2">
+          <label className="flex min-w-0 flex-col gap-2">
+            <FieldLabel en={copy.personalize.brotherLabel} hi={copy.personalize.brotherLabelHi} />
             <input
               className="field display text-lg"
               required
               maxLength={28}
-              placeholder={copy.personalize.sisterPlaceholder}
-              value={gift.sister}
-              onChange={(e) => setGift((g) => ({ ...g, sister: e.target.value }))}
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="caption">{copy.personalize.brotherLabel}</span>
-            <input
-              className="field display text-lg"
-              required
-              maxLength={28}
+              autoComplete="off"
               placeholder={copy.personalize.brotherPlaceholder}
               value={gift.brother}
               onChange={(e) => setGift((g) => ({ ...g, brother: e.target.value }))}
             />
           </label>
+          <label className="flex min-w-0 flex-col gap-2">
+            <FieldLabel en={copy.personalize.sisterLabel} hi={copy.personalize.sisterLabelHi} />
+            <input
+              className="field display text-lg"
+              required
+              maxLength={28}
+              autoComplete="off"
+              placeholder={copy.personalize.sisterPlaceholder}
+              value={gift.sister}
+              onChange={(e) => setGift((g) => ({ ...g, sister: e.target.value }))}
+            />
+          </label>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <span className="caption">{copy.personalize.messageLabel}</span>
+        <div className="flex min-w-0 flex-col gap-3">
+          <FieldLabel en={copy.personalize.messageLabel} hi={copy.personalize.messageLabelHi} />
           <textarea
             className="field min-h-[7.5rem] resize-y leading-relaxed"
             rows={4}
@@ -277,6 +432,9 @@ function Personalize({
             value={gift.message}
             onChange={(e) => setGift((g) => ({ ...g, message: e.target.value }))}
           />
+          <p className="deva text-[0.85rem] text-[color:color-mix(in_oklab,var(--ink)_60%,var(--parchment))]">
+            {copy.personalize.messageHint}
+          </p>
           <div className="flex flex-wrap gap-2">
             {copy.personalize.prompts.map((p) => (
               <button
@@ -285,7 +443,7 @@ function Personalize({
                 onClick={() =>
                   setGift((g) => ({ ...g, message: g.message ? `${g.message}\n${p} ` : `${p} ` }))
                 }
-                className="min-h-11 rounded-[3px] border border-[color:color-mix(in_oklab,var(--antique-gold)_60%,transparent)] px-3 text-[0.8rem] text-[color:color-mix(in_oklab,var(--ink)_75%,var(--parchment))] transition-colors hover:bg-[color:color-mix(in_oklab,var(--antique-gold)_14%,transparent)]"
+                className="min-h-11 max-w-full rounded-[3px] border border-[color:color-mix(in_oklab,var(--antique-gold)_60%,transparent)] px-3 text-left text-[0.8rem] text-[color:color-mix(in_oklab,var(--ink)_75%,var(--parchment))] transition-colors hover:bg-[color:color-mix(in_oklab,var(--antique-gold)_14%,transparent)]"
               >
                 {p}
               </button>
@@ -293,8 +451,8 @@ function Personalize({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <span className="caption">{copy.personalize.photoLabel}</span>
+        <div className="flex min-w-0 flex-col gap-3">
+          <FieldLabel en={copy.personalize.photoLabel} hi={copy.personalize.photoLabelHi} />
           <div className="flex flex-wrap items-center gap-4">
             <label className="btn-base btn-ghost cursor-pointer">
               {gift.photo ? "Change photo" : "Add a photo"}
@@ -305,7 +463,7 @@ function Personalize({
                 <img
                   src={gift.photo}
                   alt="Preview of the photo you added"
-                  className="size-14 rounded-full border border-[color:var(--antique-gold)] object-cover"
+                  className="size-14 shrink-0 rounded-full border border-[color:var(--antique-gold)] object-cover"
                 />
                 <button
                   type="button"
@@ -351,7 +509,10 @@ function Designs({
   return (
     <section className="w-full max-w-[62rem] py-8">
       <header className="text-center">
-        <h2 className="display text-[clamp(1.6rem,5vw,2.1rem)]">{copy.designs.title}</h2>
+        <p className="deva text-[clamp(1.1rem,4vw,1.4rem)] text-[color:var(--t-accent)]">
+          {copy.designs.titleHi}
+        </p>
+        <h2 className="display mt-2 text-[clamp(1.5rem,5vw,2.1rem)]">{copy.designs.title}</h2>
         <p className="mt-3 text-[0.95rem] text-[color:color-mix(in_oklab,var(--ink)_70%,var(--parchment))]">
           {copy.designs.subtitle}
         </p>
@@ -359,27 +520,30 @@ function Designs({
       </header>
 
       <ul
-        className="-mx-[clamp(1rem,5vw,3rem)] flex snap-x snap-mandatory gap-4 overflow-x-auto px-[clamp(1rem,5vw,3rem)] pb-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3"
+        className="-mx-[clamp(0.9rem,5vw,3rem)] flex snap-x snap-mandatory gap-4 overflow-x-auto px-[clamp(0.9rem,5vw,3rem)] pb-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3"
         role="list"
       >
         {themes.map((t) => {
           const active = t.id === selected;
           return (
-            <li key={t.id} className="min-w-[16rem] flex-1 snap-center sm:min-w-0">
+            <li key={t.id} className="min-w-[15rem] flex-1 snap-center sm:min-w-0">
               <button
                 type="button"
                 aria-pressed={active}
                 onClick={() => onSelect(t.id)}
                 style={t.vars as React.CSSProperties}
-                className={`lift keepsake flex h-full w-full flex-col items-center gap-3 p-6 text-center transition-shadow ${
+                className={`lift keepsake flex h-full w-full flex-col items-center gap-2 p-6 text-center transition-shadow ${
                   active
                     ? "outline outline-2 outline-offset-4 outline-[color:var(--t-accent)]"
                     : "opacity-90"
                 }`}
               >
                 <span className="caption self-start">{t.index}</span>
-                <Rakhi theme={t.id} animate={false} className="w-28" />
-                <span className="display text-xl">{t.name}</span>
+                <Rakhi theme={t.id} animate={active} className="w-28" />
+                <span className="deva mt-1 text-[1.15rem] text-[color:var(--t-accent)]">
+                  {t.nameHi}
+                </span>
+                <span className="display text-lg">{t.name}</span>
                 <span className="text-[0.85rem] leading-relaxed text-[color:color-mix(in_oklab,var(--ink)_66%,var(--parchment))]">
                   {t.tagline}
                 </span>
@@ -413,33 +577,40 @@ function Assembling({
   reduced: boolean;
 }) {
   const [step, setStep] = useState(0);
+
   useEffect(() => {
     if (reduced) {
-      onDone();
-      return;
+      const t = setTimeout(onDone, 400);
+      return () => clearTimeout(t);
     }
     const id = setInterval(() => {
       setStep((s) => {
         if (s >= copy.assembling.length - 1) {
           clearInterval(id);
-          setTimeout(onDone, 900);
           return s;
         }
         return s + 1;
       });
-    }, 1150);
-    return () => clearInterval(id);
+    }, 850);
+    const done = setTimeout(onDone, 850 * copy.assembling.length + 500);
+    return () => {
+      clearInterval(id);
+      clearTimeout(done);
+    };
   }, [onDone, reduced]);
 
   return (
-    <section className="flex flex-col items-center text-center" aria-live="polite">
-      <Rakhi theme={theme} className="w-[clamp(9rem,34vw,13rem)]" />
-      <p key={step} className="display reveal mt-10 text-[clamp(1.1rem,4vw,1.5rem)]">
+    <section className="flex flex-col items-center px-2 text-center" aria-live="polite">
+      <div className="relative flex items-center justify-center">
+        <Rangoli aria-hidden className="pointer-events-none absolute w-[clamp(13rem,52vw,20rem)] opacity-20" />
+        <Rakhi theme={theme} tying className="relative w-[clamp(9rem,34vw,13rem)]" />
+      </div>
+      <p key={step} className="reveal deva mt-10 text-balance text-[clamp(1rem,4vw,1.35rem)]">
         {copy.assembling[step]}
       </p>
       <div className="mt-8 h-px w-[min(18rem,70vw)] bg-[color:color-mix(in_oklab,var(--antique-gold)_45%,transparent)]">
         <div
-          className="h-px bg-[color:var(--t-accent)] transition-[width] duration-1000 ease-out"
+          className="h-px bg-[color:var(--t-accent)] transition-[width] duration-700 ease-out"
           style={{ width: `${((step + 1) / copy.assembling.length) * 100}%` }}
         />
       </div>
@@ -450,18 +621,67 @@ function Assembling({
 /* -------------------------- 5. final card -------------------------- */
 
 function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
+  const cardRef = useRef<HTMLElement>(null);
   const [copied, setCopied] = useState(false);
-  const sister = gift.sister.trim() || "Behna";
+  const [saving, setSaving] = useState(false);
+  const [emailTo, setEmailTo] = useState("");
+  const [emailFrom, setEmailFrom] = useState("");
+  const [emailQueued, setEmailQueued] = useState(false);
+
+  const sister = gift.sister.trim() || "आपकी बहन";
   const brother = gift.brother.trim() || "Bhai";
   const message = gift.message.trim() || copy.card.fallbackMessage;
 
-  const shareText = `Happy Raksha Bandhan, ${sister} — with love, ${brother}.`;
+  const shareText = `${copy.card.greeting}, ${brother} — with love, ${sister}.`;
+
+  const renderCard = useCallback(async () => {
+    const node = cardRef.current;
+    if (!node) return null;
+    const { toBlob } = await import("html-to-image");
+    return toBlob(node, {
+      pixelRatio: Math.min(3, Math.max(2, window.devicePixelRatio || 2)),
+      cacheBust: true,
+      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      filter: (el) => !(el instanceof HTMLElement && el.dataset.exportHide === "true"),
+    });
+  }, []);
+
+  const save = useCallback(async () => {
+    setSaving(true);
+    try {
+      const blob = await renderCard();
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `rakhi-for-${brother.replace(/\s+/g, "-").toLowerCase() || "bhai"}.png`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    } finally {
+      setSaving(false);
+    }
+  }, [brother, renderCard]);
 
   const share = useCallback(async () => {
     const url = typeof window !== "undefined" ? window.location.href : "/";
+    const payload: ShareData = { title: copy.card.greeting, text: shareText, url };
+
+    try {
+      const blob = await renderCard();
+      if (blob && navigator.canShare) {
+        const file = new File([blob], "rakhi.png", { type: "image/png" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ ...payload, files: [file] });
+          return;
+        }
+      }
+    } catch {
+      /* fall through to link sharing */
+    }
+
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        await navigator.share({ title: "Happy Raksha Bandhan", text: shareText, url });
+        await navigator.share(payload);
         return;
       } catch {
         /* dismissed */
@@ -474,11 +694,14 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
     } catch {
       /* clipboard blocked */
     }
-  }, [shareText]);
+  }, [renderCard, shareText]);
 
   return (
     <section className="flex w-full max-w-[34rem] flex-col items-center py-6">
-      <article className="keepsake unfold relative w-full overflow-hidden px-[clamp(1.25rem,6vw,3rem)] py-[clamp(2rem,7vw,3.25rem)] text-center">
+      <article
+        ref={cardRef}
+        className="keepsake unfold relative w-full min-w-0 overflow-hidden px-[clamp(1.1rem,6vw,3rem)] py-[clamp(1.9rem,7vw,3.25rem)] text-center"
+      >
         <span
           aria-hidden
           className="pointer-events-none absolute inset-3 border border-[color:color-mix(in_oklab,var(--antique-gold)_55%,transparent)]"
@@ -489,14 +712,18 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
         />
 
         <div className="relative">
-          <Rakhi theme={gift.theme} className="mx-auto w-[clamp(7.5rem,28vw,10.5rem)]" />
+          <Rakhi theme={gift.theme} className="mx-auto w-[clamp(7rem,28vw,10.5rem)]" />
 
-          <p className="deva mt-6 text-[color:var(--t-accent)]">शुभ रक्षाबंधन</p>
-          <h1 className="display mt-2 text-[clamp(1.35rem,5vw,1.8rem)] tracking-wide">
+          <p className="deva mt-6 text-[clamp(1.2rem,5vw,1.6rem)] text-[color:var(--t-accent)]">
+            {copy.card.greetingHi}
+          </p>
+          <h1 className="display mt-2 text-[clamp(1.05rem,4.2vw,1.4rem)] tracking-wide">
             {copy.card.greeting}
           </h1>
-          <p className="display mt-3 text-[clamp(2rem,9vw,3.25rem)] leading-[1.05] text-[color:var(--t-accent)]">
-            {sister}
+
+          <p className="caption mt-7">{copy.card.forLabel}</p>
+          <p className="display mt-2 text-balance text-[clamp(1.8rem,8.5vw,3rem)] leading-[1.1] text-[color:var(--t-accent)]">
+            {brother}
           </p>
 
           <Divider className="mx-auto my-7" />
@@ -507,32 +734,124 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
 
           {gift.photo && (
             <div className="mt-9">
-              <PhotoFrame src={gift.photo} alt={`${brother} and ${sister}`} />
+              <PhotoFrame src={gift.photo} alt={`${sister} and ${brother}`} />
             </div>
           )}
 
-          <p className="caption mt-9">{copy.card.signature}</p>
-          <p className="display mt-1 text-[clamp(1.25rem,5vw,1.6rem)]">{brother}</p>
+          <p className="deva mt-9 whitespace-pre-line text-[0.98rem] leading-[1.9] text-[color:color-mix(in_oklab,var(--ink)_70%,var(--parchment))]">
+            {copy.card.blessingHi}
+          </p>
 
-          <Divider className="mx-auto mt-8" />
+          <Divider className="mx-auto my-7" />
+
+          <p className="caption">{copy.card.signature}</p>
+          <p className="display mt-1 text-[clamp(1.2rem,5vw,1.6rem)]">{sister}</p>
+          <p className="deva mt-1 text-[0.9rem] text-[color:color-mix(in_oklab,var(--ink)_58%,var(--parchment))]">
+            {copy.card.signatureHi}
+          </p>
+
+          <p className="deva mt-8 text-[0.72rem] tracking-[0.12em] text-[color:color-mix(in_oklab,var(--ink)_45%,var(--parchment))]">
+            {copy.credit}
+          </p>
         </div>
       </article>
 
-      <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-        <button type="button" onClick={share} className="btn-base btn-primary">
-          {copied ? copy.card.copied : copy.card.share}
-        </button>
-        <button type="button" onClick={() => window.print()} className="btn-base btn-ghost">
-          {copy.card.download}
-        </button>
+      {/* ------------------------ send / share / save ------------------------ */}
+      <div className="mt-[clamp(2rem,7vw,3rem)] w-full">
+        <header className="text-center">
+          <p className="deva text-[clamp(1.05rem,4vw,1.35rem)] text-[color:var(--t-accent)]">
+            {copy.share.titleHi}
+          </p>
+          <h2 className="display mt-2 text-[clamp(1.25rem,4.6vw,1.7rem)]">{copy.share.title}</h2>
+          <p className="mt-2 text-[0.9rem] text-[color:color-mix(in_oklab,var(--ink)_68%,var(--parchment))]">
+            {copy.share.subtitle}
+          </p>
+          <Divider className="mx-auto my-7" />
+        </header>
+
+        <div className="flex flex-col gap-4">
+          {/* email */}
+          <form
+            className="keepsake flex min-w-0 flex-col gap-4 p-[clamp(1.1rem,5vw,1.75rem)]"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setEmailQueued(true);
+            }}
+          >
+            <h3 className="display text-[1.05rem]">{copy.share.emailTitle}</h3>
+            <label className="flex min-w-0 flex-col gap-1">
+              <span className="caption">To · {copy.share.emailTo}</span>
+              <input
+                type="email"
+                required
+                className="field"
+                placeholder="bhai@example.com"
+                value={emailTo}
+                onChange={(e) => {
+                  setEmailTo(e.target.value);
+                  setEmailQueued(false);
+                }}
+              />
+            </label>
+            <label className="flex min-w-0 flex-col gap-1">
+              <span className="caption">From · {copy.share.emailFrom}</span>
+              <input
+                type="email"
+                required
+                className="field"
+                placeholder="behna@example.com"
+                value={emailFrom}
+                onChange={(e) => {
+                  setEmailFrom(e.target.value);
+                  setEmailQueued(false);
+                }}
+              />
+            </label>
+            <button type="submit" className="btn-base btn-ghost self-start">
+              {copy.share.emailSend}
+            </button>
+            {emailQueued && (
+              <p role="status" className="text-[0.85rem] leading-relaxed text-[color:var(--burnt)]">
+                {copy.share.emailPending}
+              </p>
+            )}
+          </form>
+
+          {/* share + save */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="keepsake flex min-w-0 flex-col items-start gap-3 p-[clamp(1.1rem,5vw,1.75rem)]">
+              <h3 className="display text-[1.05rem]">{copy.share.shareTitle}</h3>
+              <button type="button" onClick={share} className="btn-base btn-primary w-full">
+                {copied ? copy.share.copied : copy.share.shareBtn}
+              </button>
+            </div>
+            <div className="keepsake flex min-w-0 flex-col items-start gap-3 p-[clamp(1.1rem,5vw,1.75rem)]">
+              <h3 className="display text-[1.05rem]">{copy.share.saveTitle}</h3>
+              <button
+                type="button"
+                onClick={save}
+                disabled={saving}
+                className="btn-base btn-ghost w-full disabled:opacity-60"
+              >
+                {saving ? "Preparing…" : copy.share.saveImage}
+              </button>
+              <p className="text-xs leading-relaxed text-[color:color-mix(in_oklab,var(--ink)_55%,var(--parchment))]">
+                {copy.share.gifPending}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
       <button
         type="button"
         onClick={onRestart}
-        className="mt-5 min-h-11 text-sm underline underline-offset-4 text-[color:color-mix(in_oklab,var(--ink)_65%,var(--parchment))]"
+        className="mt-8 min-h-11 text-sm text-[color:color-mix(in_oklab,var(--ink)_65%,var(--parchment))] underline underline-offset-4"
       >
         {copy.card.restart}
       </button>
+
+      <Credit />
     </section>
   );
 }
