@@ -351,3 +351,246 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ---------- rakhi tying sequence ---------- */
+
+@keyframes rk-draw {
+  from {
+    stroke-dashoffset: var(--rk-len, 200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rk-thread-settle {
+  0% {
+    transform: translate3d(0, -6px, 0) scaleX(1.06);
+  }
+  60% {
+    transform: translate3d(0, 1px, 0) scaleX(0.995);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes rk-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.62) rotate(-7deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.03) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rk-settle {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rk-tassel-swing {
+  0% {
+    transform: rotate(-9deg);
+  }
+  45% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes rk-wrap {
+  0% {
+    transform: rotate(-6deg) translate3d(0, -10px, 0);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  70% {
+    transform: rotate(2.4deg) translate3d(0, 2px, 0);
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Idle sway keeps the rakhi feeling like cloth on a wrist. */
+.rakhi-sway {
+  animation: sway 7s ease-in-out infinite;
+  transform-origin: 50% 48%;
+}
+
+.rakhi-tying {
+  animation: rk-wrap 1100ms var(--ease-unfold) both;
+  transform-origin: 50% 62%;
+}
+
+.rakhi-tying .rk-thread {
+  stroke-dasharray: 240;
+  --rk-len: 240;
+  animation:
+    rk-draw 900ms cubic-bezier(0.32, 0.7, 0.22, 1) both,
+    rk-thread-settle 700ms var(--ease-unfold) 820ms both;
+}
+
+.rakhi-tying .rk-thread-2 {
+  animation-delay: 220ms, 1020ms;
+}
+
+.rakhi-tying .rk-petals > * {
+  transform-box: fill-box;
+  transform-origin: 50% 130%;
+  animation: rk-bloom 620ms var(--ease-unfold) both;
+}
+
+.rakhi-tying .rk-beads > * {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rk-settle 420ms var(--ease-unfold) both;
+  animation-delay: 1250ms;
+}
+
+.rakhi-tying .rk-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rk-settle 700ms var(--ease-unfold) 1350ms both;
+}
+
+.rakhi-tying .rk-tassel {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: rk-tassel-swing 1400ms cubic-bezier(0.22, 0.8, 0.3, 1) 1150ms both;
+}
+
+/* Petals bloom one after another, like details added by hand. */
+.rakhi-tying .rk-petals > *:nth-child(1) { animation-delay: 900ms; }
+.rakhi-tying .rk-petals > *:nth-child(2) { animation-delay: 940ms; }
+.rakhi-tying .rk-petals > *:nth-child(3) { animation-delay: 980ms; }
+.rakhi-tying .rk-petals > *:nth-child(4) { animation-delay: 1020ms; }
+.rakhi-tying .rk-petals > *:nth-child(5) { animation-delay: 1060ms; }
+.rakhi-tying .rk-petals > *:nth-child(6) { animation-delay: 1100ms; }
+.rakhi-tying .rk-petals > *:nth-child(7) { animation-delay: 1140ms; }
+.rakhi-tying .rk-petals > *:nth-child(8) { animation-delay: 1180ms; }
+.rakhi-tying .rk-petals > *:nth-child(9) { animation-delay: 1220ms; }
+.rakhi-tying .rk-petals > *:nth-child(10) { animation-delay: 1260ms; }
+.rakhi-tying .rk-petals > *:nth-child(11) { animation-delay: 1300ms; }
+.rakhi-tying .rk-petals > *:nth-child(12) { animation-delay: 1340ms; }
+.rakhi-tying .rk-petals > *:nth-child(13) { animation-delay: 1380ms; }
+.rakhi-tying .rk-petals > *:nth-child(14) { animation-delay: 1420ms; }
+.rakhi-tying .rk-petals > *:nth-child(15) { animation-delay: 1460ms; }
+.rakhi-tying .rk-petals > *:nth-child(16) { animation-delay: 1500ms; }
+
+/* ---------- diya flame ---------- */
+
+@keyframes flame-flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-1.2deg);
+    opacity: 0.9;
+  }
+  35% {
+    transform: scale(1.06, 0.96) rotate(1.6deg);
+    opacity: 1;
+  }
+  62% {
+    transform: scale(0.96, 1.05) rotate(-0.6deg);
+    opacity: 0.85;
+  }
+}
+
+.flame {
+  animation: flame-flicker 2.6s ease-in-out infinite;
+  transform-box: fill-box;
+}
+
+/* ---------- photo reveal ---------- */
+
+@keyframes photo-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+    clip-path: inset(12% 12% 12% 12% round 50%);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0 round 50%);
+  }
+}
+
+.photo-reveal {
+  animation: photo-reveal 1100ms var(--ease-unfold) 260ms both;
+}
+
+/* ---------- scroll reveal ---------- */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 900ms var(--ease-unfold),
+    transform 900ms var(--ease-unfold);
+  will-change: transform, opacity;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- touch / small screens ---------- */
+
+@media (hover: none) {
+  .lift:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 24rem) {
+  .rakhi-sway {
+    animation-duration: 9s;
+  }
+}
+
+/* ---------- graceful static fallback ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .rakhi-sway,
+  .rakhi-tying,
+  .rakhi-tying *,
+  .flame,
+  .photo-reveal,
+  .petal {
+    animation: none !important;
+  }
+
+  .rakhi-tying .rk-thread {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
