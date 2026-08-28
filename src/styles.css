@@ -5,17 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Raksha Bandhan keepsake design system.
+ * Palette: handmade paper + sindoor + antique gold. All colors are oklch.
  */
 
 @theme inline {
@@ -24,8 +15,6 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -45,91 +34,69 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-ivory: var(--ivory);
+  --color-parchment: var(--parchment);
+  --color-vermillion: var(--vermillion);
+  --color-saffron: var(--saffron);
+  --color-burnt: var(--burnt);
+  --color-antique-gold: var(--antique-gold);
+  --color-forest: var(--forest);
+  --color-rose: var(--rose);
+  --color-ink: var(--ink);
+
+  --font-display: "Marcellus", ui-serif, Georgia, serif;
+  --font-body: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-deva: "Tiro Devanagari Hindi", ui-serif, serif;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
-}
+  --radius: 0.375rem;
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* keepsake palette */
+  --ivory: oklch(0.972 0.012 85);
+  --parchment: oklch(0.945 0.021 82);
+  --vermillion: oklch(0.487 0.171 30);
+  --saffron: oklch(0.742 0.148 66);
+  --burnt: oklch(0.582 0.135 47);
+  --antique-gold: oklch(0.703 0.086 82);
+  --forest: oklch(0.398 0.062 148);
+  --rose: oklch(0.632 0.114 15);
+  --ink: oklch(0.268 0.031 45);
+
+  /* shadcn mapping */
+  --background: var(--ivory);
+  --foreground: var(--ink);
+  --card: var(--parchment);
+  --card-foreground: var(--ink);
+  --popover: var(--parchment);
+  --popover-foreground: var(--ink);
+  --primary: var(--vermillion);
+  --primary-foreground: var(--ivory);
+  --secondary: var(--parchment);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.928 0.018 82);
+  --muted-foreground: oklch(0.478 0.033 50);
+  --accent: var(--antique-gold);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.52 0.19 27);
+  --destructive-foreground: var(--ivory);
+  --border: color-mix(in oklab, var(--antique-gold) 45%, transparent);
+  --input: color-mix(in oklab, var(--antique-gold) 55%, transparent);
+  --ring: var(--burnt);
+
+  /* surfaces */
+  --surface-paper: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--ivory) 92%, white) 0%,
+      var(--parchment) 100%
+    );
+  --shadow-keepsake: 0 30px 60px -40px oklch(0.35 0.06 45 / 0.75),
+    0 2px 0 0 color-mix(in oklab, var(--antique-gold) 25%, transparent);
+
+  /* motion */
+  --ease-unfold: cubic-bezier(0.16, 0.84, 0.24, 1);
+  --dur-reveal: 900ms;
 }
 
 @layer base {
@@ -137,8 +104,493 @@
     border-color: var(--color-border);
   }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--ivory);
+    color: var(--ink);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    /* handmade paper grain, pure CSS */
+    background-image:
+      radial-gradient(circle at 18% 12%, color-mix(in oklab, var(--saffron) 9%, transparent), transparent 45%),
+      radial-gradient(circle at 84% 82%, color-mix(in oklab, var(--vermillion) 7%, transparent), transparent 48%);
+    background-attachment: fixed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--burnt);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ---------- surfaces ---------- */
+
+@utility paper {
+  background-image: var(--surface-paper);
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
+    background-image:
+      repeating-linear-gradient(
+        122deg,
+        color-mix(in oklab, var(--ink) 3%, transparent) 0 1px,
+        transparent 1px 3px
+      ),
+      repeating-linear-gradient(
+        28deg,
+        color-mix(in oklab, var(--ink) 2%, transparent) 0 1px,
+        transparent 1px 4px
+      );
+  }
+}
+
+@utility keepsake {
+  background-image: var(--surface-paper);
+  box-shadow: var(--shadow-keepsake);
+  border: 1px solid color-mix(in oklab, var(--antique-gold) 55%, transparent);
+}
+
+/* ---------- typography helpers ---------- */
+
+@utility display {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+@utility deva {
+  font-family: var(--font-deva);
+  letter-spacing: 0.02em;
+}
+
+@utility caption {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ink) 62%, var(--parchment));
+}
+
+/* ---------- buttons ---------- */
+
+@utility btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  transition:
+    transform 220ms var(--ease-unfold),
+    box-shadow 220ms var(--ease-unfold),
+    background-color 220ms ease,
+    color 220ms ease;
+  &:active {
+    transform: translateY(1px) scale(0.99);
+  }
+}
+
+@utility btn-primary {
+  background-color: var(--vermillion);
+  color: var(--ivory);
+  box-shadow:
+    0 12px 24px -18px oklch(0.35 0.12 30 / 0.9),
+    inset 0 0 0 1px color-mix(in oklab, var(--antique-gold) 40%, transparent);
+  &:hover {
+    background-color: color-mix(in oklab, var(--vermillion) 90%, black);
+    box-shadow:
+      0 16px 30px -18px oklch(0.35 0.12 30 / 0.95),
+      inset 0 0 0 1px color-mix(in oklab, var(--antique-gold) 70%, transparent);
+  }
+}
+
+@utility btn-ghost {
+  background-color: color-mix(in oklab, var(--ivory) 70%, transparent);
+  color: var(--ink);
+  border: 1px solid color-mix(in oklab, var(--antique-gold) 70%, transparent);
+  &:hover {
+    background-color: color-mix(in oklab, var(--antique-gold) 14%, var(--ivory));
+  }
+}
+
+/* ---------- fields ---------- */
+
+@utility field {
+  width: 100%;
+  min-height: 3rem;
+  background-color: color-mix(in oklab, var(--ivory) 80%, transparent);
+  border: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--antique-gold) 75%, transparent);
+  padding: 0.75rem 0.25rem;
+  font-family: var(--font-body);
+  color: var(--ink);
+  transition: border-color 200ms ease, background-color 200ms ease;
+  &::placeholder {
+    color: color-mix(in oklab, var(--ink) 42%, var(--parchment));
+  }
+  &:focus {
+    border-bottom-color: var(--vermillion);
+    background-color: color-mix(in oklab, var(--ivory) 95%, transparent);
+  }
+}
+
+/* ---------- motion ---------- */
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes unfold {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(-14deg) translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 8vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(4vw, -95vh, 0) rotate(220deg);
+    opacity: 0;
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-2.2deg);
+  }
+  50% {
+    transform: rotate(2.2deg);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@utility reveal {
+  animation: reveal-up 800ms var(--ease-unfold) both;
+}
+
+@utility unfold {
+  animation: unfold var(--dur-reveal) var(--ease-unfold) both;
+  transform-origin: top center;
+}
+
+@utility rakhi-sway {
+  animation: sway 7s ease-in-out infinite;
+  transform-origin: 50% 48%;
+}
+
+@utility lamp-glow {
+  animation: glow 6s ease-in-out infinite;
+}
+
+@utility petal {
+  animation: drift linear infinite;
+  will-change: transform, opacity;
+}
+
+@utility lift {
+  transition: transform 400ms var(--ease-unfold), box-shadow 400ms var(--ease-unfold);
+  &:hover {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- rakhi tying sequence ---------- */
+
+@keyframes rk-draw {
+  from {
+    stroke-dashoffset: var(--rk-len, 200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rk-thread-settle {
+  0% {
+    transform: translate3d(0, -6px, 0) scaleX(1.06);
+  }
+  60% {
+    transform: translate3d(0, 1px, 0) scaleX(0.995);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes rk-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.62) rotate(-7deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.03) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rk-settle {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rk-tassel-swing {
+  0% {
+    transform: rotate(-9deg);
+  }
+  45% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes rk-wrap {
+  0% {
+    transform: rotate(-6deg) translate3d(0, -10px, 0);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  70% {
+    transform: rotate(2.4deg) translate3d(0, 2px, 0);
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Idle sway keeps the rakhi feeling like cloth on a wrist. */
+.rakhi-sway {
+  animation: sway 7s ease-in-out infinite;
+  transform-origin: 50% 48%;
+}
+
+.rakhi-tying {
+  animation: rk-wrap 1100ms var(--ease-unfold) both;
+  transform-origin: 50% 62%;
+}
+
+.rakhi-tying .rk-thread {
+  stroke-dasharray: 240;
+  --rk-len: 240;
+  animation:
+    rk-draw 900ms cubic-bezier(0.32, 0.7, 0.22, 1) both,
+    rk-thread-settle 700ms var(--ease-unfold) 820ms both;
+}
+
+.rakhi-tying .rk-thread-2 {
+  animation-delay: 220ms, 1020ms;
+}
+
+.rakhi-tying .rk-petals > * {
+  transform-box: fill-box;
+  transform-origin: 50% 130%;
+  animation: rk-bloom 620ms var(--ease-unfold) both;
+}
+
+.rakhi-tying .rk-beads > * {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rk-settle 420ms var(--ease-unfold) both;
+  animation-delay: 1250ms;
+}
+
+.rakhi-tying .rk-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rk-settle 700ms var(--ease-unfold) 1350ms both;
+}
+
+.rakhi-tying .rk-tassel {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: rk-tassel-swing 1400ms cubic-bezier(0.22, 0.8, 0.3, 1) 1150ms both;
+}
+
+/* Petals bloom one after another, like details added by hand. */
+.rakhi-tying .rk-petals > *:nth-child(1) { animation-delay: 900ms; }
+.rakhi-tying .rk-petals > *:nth-child(2) { animation-delay: 940ms; }
+.rakhi-tying .rk-petals > *:nth-child(3) { animation-delay: 980ms; }
+.rakhi-tying .rk-petals > *:nth-child(4) { animation-delay: 1020ms; }
+.rakhi-tying .rk-petals > *:nth-child(5) { animation-delay: 1060ms; }
+.rakhi-tying .rk-petals > *:nth-child(6) { animation-delay: 1100ms; }
+.rakhi-tying .rk-petals > *:nth-child(7) { animation-delay: 1140ms; }
+.rakhi-tying .rk-petals > *:nth-child(8) { animation-delay: 1180ms; }
+.rakhi-tying .rk-petals > *:nth-child(9) { animation-delay: 1220ms; }
+.rakhi-tying .rk-petals > *:nth-child(10) { animation-delay: 1260ms; }
+.rakhi-tying .rk-petals > *:nth-child(11) { animation-delay: 1300ms; }
+.rakhi-tying .rk-petals > *:nth-child(12) { animation-delay: 1340ms; }
+.rakhi-tying .rk-petals > *:nth-child(13) { animation-delay: 1380ms; }
+.rakhi-tying .rk-petals > *:nth-child(14) { animation-delay: 1420ms; }
+.rakhi-tying .rk-petals > *:nth-child(15) { animation-delay: 1460ms; }
+.rakhi-tying .rk-petals > *:nth-child(16) { animation-delay: 1500ms; }
+
+/* ---------- diya flame ---------- */
+
+@keyframes flame-flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-1.2deg);
+    opacity: 0.9;
+  }
+  35% {
+    transform: scale(1.06, 0.96) rotate(1.6deg);
+    opacity: 1;
+  }
+  62% {
+    transform: scale(0.96, 1.05) rotate(-0.6deg);
+    opacity: 0.85;
+  }
+}
+
+.flame {
+  animation: flame-flicker 2.6s ease-in-out infinite;
+  transform-box: fill-box;
+}
+
+/* ---------- photo reveal ---------- */
+
+@keyframes photo-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+    clip-path: inset(12% 12% 12% 12% round 50%);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0 round 50%);
+  }
+}
+
+.photo-reveal {
+  animation: photo-reveal 1100ms var(--ease-unfold) 260ms both;
+}
+
+/* ---------- scroll reveal ---------- */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 900ms var(--ease-unfold),
+    transform 900ms var(--ease-unfold);
+  will-change: transform, opacity;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- touch / small screens ---------- */
+
+@media (hover: none) {
+  .lift:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 24rem) {
+  .rakhi-sway {
+    animation-duration: 9s;
+  }
+}
+
+/* ---------- graceful static fallback ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .rakhi-sway,
+  .rakhi-tying,
+  .rakhi-tying *,
+  .flame,
+  .photo-reveal,
+  .petal {
+    animation: none !important;
+  }
+
+  .rakhi-tying .rk-thread {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
