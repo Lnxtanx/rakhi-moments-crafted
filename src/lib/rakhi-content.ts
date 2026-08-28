@@ -73,9 +73,11 @@ export const copy = {
     emailTo: "Brother's email",
     emailFrom: "Your email",
     emailSend: "Send via Email",
-    emailOpens:
-      "Your email app is opening with the Rakhi message ready to send — just press send.",
-    mailtoLinkLabel: "A little keepsake for us",
+    emailSending: "Sending…",
+    emailSent: "Email sent — your Rakhi is on its way.",
+    emailError: "Couldn't send the email. Please try again.",
+    emailUnconfigured:
+      "Email sending isn't configured yet — add your EmailJS keys (VITE_EMAILJS_*) and try again.",
     shareTitle: "Share Rakhi",
     shareBtn: "Share link",
     copied: "Link copied",

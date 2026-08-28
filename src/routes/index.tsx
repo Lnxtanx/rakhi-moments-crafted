@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { copy, getTheme, themes, type ThemeId } from "@/lib/rakhi-content";
+import { isEmailJsConfigured, sendRakhiEmail } from "@/lib/email-send";
 import { CornerVine, Divider, Diya, Lotus, PhotoFrame, Rakhi, Rangoli } from "@/components/ornaments";
 
 export const Route = createFileRoute("/")({
@@ -626,7 +627,9 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
   const [saving, setSaving] = useState(false);
   const [emailTo, setEmailTo] = useState("");
   const [emailFrom, setEmailFrom] = useState("");
-  const [emailOpened, setEmailOpened] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const sister = gift.sister.trim() || "आपकी बहन";
   const brother = gift.brother.trim() || "Bhai";
@@ -634,28 +637,38 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
 
   const shareText = `${copy.card.greeting}, ${brother} — with love, ${sister}.`;
 
-  /** Builds a mailto: link that opens the visitor's own mail client, pre-filled
-   *  with the finished Rakhi message. There is no email backend involved. */
-  const buildMailto = useCallback(
-    (to: string, from: string) => {
-      const recipient = to.trim();
+  const sendEmail = useCallback(
+    async (to: string, from: string) => {
       const sender = from.trim();
-      if (!recipient || !sender) return "";
-      const url = typeof window !== "undefined" ? window.location.href : "";
-      const lines: string[] = [
-        `${copy.card.greeting}, ${brother}!`,
-        "",
-        message,
-        "",
-        `${copy.card.signature} ${sister}`,
-      ];
-      if (sender) lines.push(`· ${sender}`);
-      if (url) lines.push("", `${copy.share.mailtoLinkLabel}: ${url}`);
-      const subject = `${copy.card.greeting}, ${brother} ❤️`;
-      const body = lines.join("\n");
-      return `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const recipient = to.trim();
+      if (!sender || !recipient) return;
+      if (emailSending) return;
+      if (!isEmailJsConfigured()) {
+        setEmailError(copy.share.emailUnconfigured);
+        return;
+      }
+      setEmailSending(true);
+      setEmailSent(false);
+      setEmailError("");
+      try {
+        const url = typeof window !== "undefined" ? window.location.href : "";
+        await sendRakhiEmail({
+          toEmail: recipient,
+          toName: brother,
+          fromName: sister,
+          replyTo: sender,
+          subject: `${copy.card.greeting}, ${brother} ❤️`,
+          message,
+          rakhiLink: url,
+        });
+        setEmailSent(true);
+      } catch {
+        setEmailError(copy.share.emailError);
+      } finally {
+        setEmailSending(false);
+      }
     },
-    [brother, message, sister],
+    [brother, emailSending, message, sister],
   );
 
   const renderCard = useCallback(async () => {
@@ -795,9 +808,7 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
             className="keepsake flex min-w-0 flex-col gap-4 p-[clamp(1.1rem,5vw,1.75rem)]"
             onSubmit={(e) => {
               e.preventDefault();
-              const href = buildMailto(emailTo, emailFrom);
-              if (href) window.location.href = href;
-              setEmailOpened(Boolean(href));
+              void sendEmail(emailTo, emailFrom);
             }}
           >
             <h3 className="display text-[1.05rem]">{copy.share.emailTitle}</h3>
@@ -811,7 +822,8 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
                 value={emailTo}
                 onChange={(e) => {
                   setEmailTo(e.target.value);
-                  setEmailOpened(false);
+                  setEmailSent(false);
+                  setEmailError("");
                 }}
               />
             </label>
@@ -825,16 +837,22 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
                 value={emailFrom}
                 onChange={(e) => {
                   setEmailFrom(e.target.value);
-                  setEmailOpened(false);
+                  setEmailSent(false);
+                  setEmailError("");
                 }}
               />
             </label>
-            <button type="submit" className="btn-base btn-ghost self-start">
-              {copy.share.emailSend}
+            <button type="submit" disabled={emailSending} className="btn-base btn-ghost self-start disabled:opacity-60">
+              {emailSending ? copy.share.emailSending : copy.share.emailSend}
             </button>
-            {emailOpened && (
-              <p role="status" className="text-[0.85rem] leading-relaxed text-[color:var(--burnt)]">
-                {copy.share.emailOpens}
+            {emailSent && (
+              <p role="status" className="text-[0.85rem] leading-relaxed text-[color:var(--forest)]">
+                {copy.share.emailSent}
+              </p>
+            )}
+            {!emailSent && emailError && (
+              <p role="alert" className="text-[0.85rem] leading-relaxed text-[color:var(--burnt)]">
+                {emailError}
               </p>
             )}
           </form>

@@ -941,3 +941,29 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Email (Send via Email)
+
+The "Send via Email" button delivers the Rakhi straight from the browser using
+[EmailJS](https://www.emailjs.com) — it does **not** open a visitor's mail app.
+
+To turn it on:
+
+1. Create a free account at https://www.emailjs.com.
+2. In **Email Services**, add a service (e.g. Gmail / Outlook / your SMTP) — copy the **Service ID** (`service_…`).
+3. In **Email Templates**, create a template and copy its **Template ID** (`template_…`).
+   Give it a subject that uses the `{{subject}}` variable, and a body built from
+   `{{to_name}}`, `{{message}}`, `{{from_name}}`, `{{reply_to}}` and `{{rakhi_link}}`.
+4. In **Account → API Keys**, copy your **Public Key**.
+5. Create a `.env` file from `.env.example` and fill in the three values:
+
+   ```
+   VITE_EMAILJS_SERVICE_ID=service_…
+   VITE_EMAILJS_TEMPLATE_ID=template_…
+   VITE_EMAILJS_PUBLIC_KEY=…
+   ```
+
+   In Lovable, set the same keys under your project's environment variables.
+
+The email is sent from your EmailJS-verified sender; the sister's email is passed as
+the reply-to, so the brother can reply straight to her.
