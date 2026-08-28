@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { copy, getTheme, themes, type ThemeId } from "@/lib/rakhi-content";
-import { isEmailJsConfigured, sendRakhiEmail } from "@/lib/email-send";
 import { CornerVine, Divider, Diya, Lotus, PhotoFrame, Rakhi, Rangoli } from "@/components/ornaments";
 
 export const Route = createFileRoute("/")({
@@ -625,51 +624,12 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
   const cardRef = useRef<HTMLElement>(null);
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [emailTo, setEmailTo] = useState("");
-  const [emailFrom, setEmailFrom] = useState("");
-  const [emailSending, setEmailSending] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-  const [emailError, setEmailError] = useState("");
 
   const sister = gift.sister.trim() || "आपकी बहन";
   const brother = gift.brother.trim() || "Bhai";
   const message = gift.message.trim() || copy.card.fallbackMessage;
 
   const shareText = `${copy.card.greeting}, ${brother} — with love, ${sister}.`;
-
-  const sendEmail = useCallback(
-    async (to: string, from: string) => {
-      const sender = from.trim();
-      const recipient = to.trim();
-      if (!sender || !recipient) return;
-      if (emailSending) return;
-      if (!isEmailJsConfigured()) {
-        setEmailError(copy.share.emailUnconfigured);
-        return;
-      }
-      setEmailSending(true);
-      setEmailSent(false);
-      setEmailError("");
-      try {
-        const url = typeof window !== "undefined" ? window.location.href : "";
-        await sendRakhiEmail({
-          toEmail: recipient,
-          toName: brother,
-          fromName: sister,
-          replyTo: sender,
-          subject: `${copy.card.greeting}, ${brother} ❤️`,
-          message,
-          rakhiLink: url,
-        });
-        setEmailSent(true);
-      } catch {
-        setEmailError(copy.share.emailError);
-      } finally {
-        setEmailSending(false);
-      }
-    },
-    [brother, emailSending, message, sister],
-  );
 
   const renderCard = useCallback(async () => {
     const node = cardRef.current;
@@ -803,60 +763,6 @@ function FinalCard({ gift, onRestart }: { gift: Gift; onRestart: () => void }) {
         </header>
 
         <div className="flex flex-col gap-4">
-          {/* email */}
-          <form
-            className="keepsake flex min-w-0 flex-col gap-4 p-[clamp(1.1rem,5vw,1.75rem)]"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void sendEmail(emailTo, emailFrom);
-            }}
-          >
-            <h3 className="display text-[1.05rem]">{copy.share.emailTitle}</h3>
-            <label className="flex min-w-0 flex-col gap-1">
-              <span className="caption">To · {copy.share.emailTo}</span>
-              <input
-                type="email"
-                required
-                className="field"
-                placeholder="bhai@example.com"
-                value={emailTo}
-                onChange={(e) => {
-                  setEmailTo(e.target.value);
-                  setEmailSent(false);
-                  setEmailError("");
-                }}
-              />
-            </label>
-            <label className="flex min-w-0 flex-col gap-1">
-              <span className="caption">From · {copy.share.emailFrom}</span>
-              <input
-                type="email"
-                required
-                className="field"
-                placeholder="behna@example.com"
-                value={emailFrom}
-                onChange={(e) => {
-                  setEmailFrom(e.target.value);
-                  setEmailSent(false);
-                  setEmailError("");
-                }}
-              />
-            </label>
-            <button type="submit" disabled={emailSending} className="btn-base btn-ghost self-start disabled:opacity-60">
-              {emailSending ? copy.share.emailSending : copy.share.emailSend}
-            </button>
-            {emailSent && (
-              <p role="status" className="text-[0.85rem] leading-relaxed text-[color:var(--forest)]">
-                {copy.share.emailSent}
-              </p>
-            )}
-            {!emailSent && emailError && (
-              <p role="alert" className="text-[0.85rem] leading-relaxed text-[color:var(--burnt)]">
-                {emailError}
-              </p>
-            )}
-          </form>
-
           {/* share + save */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="keepsake flex min-w-0 flex-col items-start gap-3 p-[clamp(1.1rem,5vw,1.75rem)]">

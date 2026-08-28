@@ -68,16 +68,7 @@ export const copy = {
   share: {
     title: "Send his Rakhi",
     titleHi: "इस रिश्ते के नाम",
-    subtitle: "Three ways to place this thread in his hands.",
-    emailTitle: "Send via email",
-    emailTo: "Brother's email",
-    emailFrom: "Your email",
-    emailSend: "Send via Email",
-    emailSending: "Sending…",
-    emailSent: "Email sent — your Rakhi is on its way.",
-    emailError: "Couldn't send the email. Please try again.",
-    emailUnconfigured:
-      "Email sending isn't configured yet — add your EmailJS keys (VITE_EMAILJS_*) and try again.",
+    subtitle: "Two ways to place this thread in his hands.",
     shareTitle: "Share Rakhi",
     shareBtn: "Share link",
     copied: "Link copied",
